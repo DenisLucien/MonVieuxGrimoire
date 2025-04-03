@@ -11,6 +11,12 @@
   },
   "plugins": ["react"],
   "rules": {
-    "linebreak-style": ["error", "windows"]
+    "linebreak-style": ["error", "windows"],
+    "quotes": ["off"],
+    "comma-dangle": ["off"],
+    "operator-linebreak": ["off"],
+    "react/jsx-one-expression-per-line": ["off"],
+    "react/jsx-curly-brace-presence": ["off"],
+    "no-underscore-dangle": "off"
   }
 }

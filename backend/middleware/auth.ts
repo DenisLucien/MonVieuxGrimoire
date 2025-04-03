@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-type AuthReq = Request & {
+export type AuthReq = Request & {
   auth?: { userId: string };
 };
 
@@ -9,11 +9,12 @@ type jwtPayloadExt = jwt.JwtPayload & {
   userId: string;
 };
 
-const auth= (req: AuthReq, res: Response, next: NextFunction) => {
+export const auth = (req: AuthReq, res: Response, next: NextFunction): void => {
   try {
     const token = req.headers.authorization;
     if (!token) {
-      return res.status(401).json({ error: "Token manquant" });
+      res.status(401).json({ error: "Token manquant" });
+      return;
     } else {
       const token2 = token.split(" ")[1];
       const decodedToken = jwt.verify(
@@ -31,4 +32,4 @@ const auth= (req: AuthReq, res: Response, next: NextFunction) => {
     res.status(401).json({ error: error || "Requête non authentifiée !" });
   }
 };
- export default auth;
+export default auth;

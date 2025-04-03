@@ -1,5 +1,7 @@
 import Book from "../models/Book";
 import { Request, Response, NextFunction } from "express";
+import fs from "fs";
+import { AuthReq } from "../middleware/auth";
 
 export const getBooks = (req: Request, res: Response, next: NextFunction) => {
   console.log("trying to get books");
@@ -9,8 +11,14 @@ export const getBooks = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const getBook = (req: Request, res: Response, next: NextFunction) => {
+  console.log("will find book");
+
   Book.findOne({ _id: req.params.id })
-    .then((book) => res.status(200).json(book))
+    .then((book) => {
+      console.log("book found");
+      console.log(book);
+      res.status(200).json(book);
+    })
     .catch((error) => res.status(400).json({ error }));
 };
 
@@ -55,24 +63,33 @@ export const createBook = async (
   }
 };
 
-export const deleteBook = (req: Request, res: Response, next: NextFunction) => {
+export const deleteBook = (req: AuthReq, res: Response, next: NextFunction) => {
+  console.log("req ");
+  console.log(req);
+  console.log("req.params ");
+  console.log(req.params);
+  console.log("req.params.id " + req.params.id);
   Book.findOne({ _id: req.params.id })
     .then((book) => {
       if (!book) {
         return res.status(404).json({ message: "Livre non trouvé" });
       } else {
-        if (book.userId != req.auth.userId) {
+        if (req.auth === undefined) {
           res.status(401).json({ message: "Not authorized" });
         } else {
-          const filename = book.imageUrl.split("/images/")[1];
-          fs.unlink(`images/${filename}`, () => {
-            book
-              .deleteOne({ _id: req.params.id })
-              .then(() => {
-                res.status(200).json({ message: "Objet supprimé !" });
-              })
-              .catch((error) => res.status(401).json({ error }));
-          });
+          if (book.userId != req.auth.userId) {
+            res.status(401).json({ message: "Not authorized" });
+          } else {
+            const filename = book.imageUrl.split("/images/")[1];
+            fs.unlink(`images/${filename}`, () => {
+              book
+                .deleteOne({ _id: req.params.id })
+                .then(() => {
+                  res.status(200).json({ message: "Objet supprimé !" });
+                })
+                .catch((error) => res.status(401).json({ error }));
+            });
+          }
         }
       }
     })
