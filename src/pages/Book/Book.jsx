@@ -24,7 +24,8 @@ function Book() {
     async function getItem() {
       const data = await getBook(params.id);
       if (data) {
-        setBook(data);
+        setBook(data[0]); // L'api retourne un tableau contenant un élément
+        // J'ai donc modifié pour prendre le premier élément
       }
     }
     getItem();
