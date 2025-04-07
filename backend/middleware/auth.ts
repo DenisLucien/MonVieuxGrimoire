@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-
+import dotenv from "dotenv";
+dotenv.config();
 export type AuthReq = Request & {
   auth?: { userId: string };
 };
@@ -19,7 +20,7 @@ export const auth = (req: AuthReq, res: Response, next: NextFunction): void => {
       const token2 = token.split(" ")[1];
       const decodedToken = jwt.verify(
         token2,
-        "RANDOM_TOKEN_SECRET"
+        process.env.TOKEN_SECRET as string // Utilisation de la variable d'environnement
       ) as jwtPayloadExt;
       //   const userId = decodedToken.userId;
       req.auth = {
