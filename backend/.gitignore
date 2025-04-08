@@ -12,3 +12,6 @@ logs/
 # Système
 .DS_Store
 Thumbs.db
+
+#Dossier images
+images/
