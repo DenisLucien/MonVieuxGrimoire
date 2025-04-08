@@ -14,7 +14,7 @@ const router = express.Router();
 router.get("/", getBooks);
 router.get("/bestrating", getBooksBestrating);
 router.get("/:id", getBook);
-router.post("/", multer, createBook);
+router.post("/", multer, auth, createBook);
 router.post("/:id/rating", auth, postBookRating);
 router.put("/:id", multer, auth, modifyBook);
 router.delete("/:id", auth, deleteBook);

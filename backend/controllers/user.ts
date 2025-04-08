@@ -3,12 +3,21 @@ import User, { IUser } from "../models/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
 export const signup = (
   req: Request,
   res: Response,
   next: NextFunction
 ): void => {
   console.log("signing up");
+  if (isValidEmail(req.body.email) === false) {
+    res.status(400).json({ message: "email non valide" });
+    return
+  }
   bcrypt
     .hash(req.body.password, 10)
     .then((hash: string) => {
@@ -19,7 +28,8 @@ export const signup = (
       user
         .save()
         .then(() => res.status(201).json({ message: "Utilisateur créé !" }))
-        .catch((error: Error) => { res.status(400).json(error);
+        .catch((error: Error) => {
+          res.status(400).json(error);
         });
     })
     .catch((error: Error) => res.status(500).json({ error }));

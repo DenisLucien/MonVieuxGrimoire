@@ -8,6 +8,8 @@ type Rating = {
   grade: number;
 };
 
+
+
 export const getBooks = (req: Request, res: Response, next: NextFunction) => {
   console.log("trying to get books");
   Book.find()
