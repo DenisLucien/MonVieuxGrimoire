@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import fs from "fs";
 import { AuthReq } from "../middleware/auth";
 import { get } from "http";
+import { z } from 'zod';
 type Rating = {
   userId: string;
   grade: number;
@@ -10,20 +11,16 @@ type Rating = {
 
 
 
-export const getBooks = (req: Request, res: Response, next: NextFunction) => {
-  console.log("trying to get books");
+export const getBooks = (req: Request, res: Response, next: NextFunction):void => {
   Book.find()
     .then((books) => res.status(200).json(books))
     .catch((error) => res.status(400).json({ error }));
 };
 
 export const getBook = (req: Request, res: Response, next: NextFunction) => {
-  console.log("will find book");
-
+  
   Book.findOne({ _id: req.params.id })
     .then((book) => {
-      console.log("book found");
-      console.log(book);
       res.status(200).json(book);
     })
     .catch((error) => res.status(400).json({ error }));
@@ -76,10 +73,6 @@ export const createBook = async (
       ratings: bookReq.ratings,
     });
     newBook.calculateAverageRating();
-    console.log(req.body);
-    console.log(bookReq);
-
-    console.log(newBook);
 
     await newBook
       .save()
@@ -183,9 +176,10 @@ export const postBookRating = async (
           grade: req.body.rating,
         };
         book.ratings.push(newRating);
+        
         book.calculateAverageRating();
-        book.save().then(() => {
-          res.status(200).json({ message: "Livré noté avec succès!" });
+        book.save().then((savedBook) => {
+          res.status(200).json(savedBook);
         });
       }
     })
