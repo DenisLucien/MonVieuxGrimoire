@@ -11,14 +11,14 @@ type Rating = {
 
 
 
-export const getBooks = (req: Request, res: Response, next: NextFunction):void => {
+export const getBooks = (req: Request, res: Response, next: NextFunction): void => {
   Book.find()
     .then((books) => res.status(200).json(books))
     .catch((error) => res.status(400).json({ error }));
 };
 
 export const getBook = (req: Request, res: Response, next: NextFunction) => {
-  
+
   Book.findOne({ _id: req.params.id })
     .then((book) => {
       res.status(200).json(book);
@@ -65,9 +65,8 @@ export const createBook = async (
       userId: bookReq.userId,
       title: bookReq.title,
       author: bookReq.author,
-      imageUrl: `${req.protocol}://${req.get("host")}/images/${
-        req.file.filename
-      }`,
+      imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename
+        }`,
       year: bookReq.year,
       genre: bookReq.genre,
       ratings: bookReq.ratings,
@@ -87,11 +86,10 @@ export const createBook = async (
 export const modifyBook = (req: AuthReq, res: Response, next: NextFunction) => {
   const modifBook = req.file
     ? {
-        ...JSON.parse(req.body.book),
-        imageUrl: `${req.protocol}://${req.get("host")}/images/${
-          req.file.filename
+      ...JSON.parse(req.body.book),
+      imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename
         }`,
-      }
+    }
     : { ...req.body };
   delete modifBook.userId;
   Book.findOne({ _id: req.params.id })
@@ -102,6 +100,9 @@ export const modifyBook = (req: AuthReq, res: Response, next: NextFunction) => {
         if (req.auth === undefined) {
           res.status(401).json({ message: "Not authorized" });
         } else {
+          if (book.userId !== req.auth.userId) {
+            return res.status(403).json({ message: "Action interdite : vous n'êtes pas l'auteur de ce livre." });
+          }
           Book.updateOne(
             { _id: req.params.id },
             { ...modifBook, _id: req.params.identifiant }
@@ -176,7 +177,7 @@ export const postBookRating = async (
           grade: req.body.rating,
         };
         book.ratings.push(newRating);
-        
+
         book.calculateAverageRating();
         book.save().then((savedBook) => {
           res.status(200).json(savedBook);
