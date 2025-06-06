@@ -44,7 +44,6 @@ export const ValidLogs = (
       !emailSchema.safeParse(req.body.email).success ||
       !schemaPassword.validate(req.body.password)
     ) {
-      console.log(!schemaPassword.validate(req.body.password));
       res.status(400).json({ message: "email/password non valide" });
       return;
     }

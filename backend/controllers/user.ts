@@ -10,7 +10,6 @@ export const signup = (
   res: Response,
   next: NextFunction
 ): void => {
-  console.log("signing up");
   bcrypt
     .hash(req.body.password, 10)
     .then((hash: string) => {
@@ -33,10 +32,8 @@ export const login = (
   res: Response,
   next: NextFunction
 ): void => {
-  console.log("finding user");
   User.findOne({ email: req.body.email })
     .then((user) => {
-      console.log("userfound");
       if (user === null) {
         return res
           .status(401)

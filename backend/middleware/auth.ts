@@ -12,7 +12,6 @@ type jwtPayloadExt = jwt.JwtPayload & {
 
 export const auth = (req: AuthReq, res: Response, next: NextFunction): void => {
   try {
-    console.log("TOKEN_SECRET:", process.env.TOKEN_SECRET);
     const token = req.headers.authorization;
     if (!token) {
       res.status(401).json({ error: "Token manquant" });
