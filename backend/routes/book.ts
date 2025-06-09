@@ -8,14 +8,14 @@ import {
   getBooksBestrating,
   postBookRating,
 } from "../controllers/book";
-import multer from "../middleware/multer-config";
+import upload, { optimizeImage } from "../middleware/multer-config";
 import { auth, AuthReq } from "../middleware/auth";
 const router = express.Router();
 router.get("/", getBooks);
 router.get("/bestrating", getBooksBestrating);
 router.get("/:id", getBook);
-router.post("/", multer, auth, createBook);
+router.post("/", upload, optimizeImage, auth, createBook);
 router.post("/:id/rating", auth, postBookRating);
-router.put("/:id", multer, auth, modifyBook);
+router.put("/:id", upload, optimizeImage, auth, modifyBook);
 router.delete("/:id", auth, deleteBook);
 export default router;
