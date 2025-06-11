@@ -3,7 +3,8 @@ import { z } from 'zod';
 import User, { IUser } from "../models/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
+import dotenv from "dotenv";
+dotenv.config();
 
 export const signup = (
   req: Request,
@@ -49,7 +50,7 @@ export const login = (
             }
             return res.status(200).json({
               userId: user._id,
-              token: jwt.sign({ userId: user._id }, "RANDOM_TOKEN_SECRET", {
+              token: jwt.sign({ userId: user._id }, process.env.TOKEN_SECRET!, {
                 expiresIn: "24h",
               }),
             });
