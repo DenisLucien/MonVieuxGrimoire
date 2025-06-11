@@ -28,21 +28,25 @@ export const optimizeImage = async (req: Request, res: any, next: any) => {
 
   const inputPath = req.file.path;
   const ext = inputPath.split('.').pop()?.toLowerCase();
+  const tempPath = inputPath + ".tmp";
 
   try {
     if (ext === "png") {
       await sharp(inputPath)
         .resize({ width: 800 })
         .png({ quality: 70, compressionLevel: 8 })
-        .toFile(inputPath);
+        .toFile(tempPath);
     } else {
       await sharp(inputPath)
         .resize({ width: 800 })
         .jpeg({ quality: 70 })
-        .toFile(inputPath);
+        .toFile(tempPath);
     }
+    fs.renameSync(tempPath, inputPath);
     next();
+
   } catch (err) {
+    if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
     next(err);
   }
 };

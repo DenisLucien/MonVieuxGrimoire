@@ -1,7 +1,5 @@
 import express, { Application, NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
-import User from "./models/User";
-import Book from "./models/Book";
 const app: Application = express();
 import bodyParser from "body-parser";
 import userRoutes from "./routes/user";

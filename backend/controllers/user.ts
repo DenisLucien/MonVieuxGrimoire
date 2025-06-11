@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { z } from 'zod';
-import User, { IUser } from "../models/User";
+import User from "../models/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";

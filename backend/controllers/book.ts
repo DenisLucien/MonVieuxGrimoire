@@ -2,8 +2,6 @@ import Book, { BookDocument } from "../models/Book";
 import { Request, Response, NextFunction } from "express";
 import fs from "fs";
 import { AuthReq } from "../middleware/auth";
-import { get } from "http";
-import { z } from 'zod';
 type Rating = {
   userId: string;
   grade: number;
@@ -96,25 +94,34 @@ export const modifyBook = (req: AuthReq, res: Response, next: NextFunction) => {
     .then((book) => {
       if (!book) {
         return res.status(404).json({ message: "Livre non trouvé" });
-      } else {
-        if (req.auth === undefined) {
-          res.status(401).json({ message: "Not authorized" });
-        } else {
-          if (book.userId !== req.auth.userId) {
-            return res.status(403).json({ message: "Action interdite : vous n'êtes pas l'auteur de ce livre." });
-          }
+      }
+      if (req.auth === undefined) {
+        return res.status(401).json({ message: "Not authorized" });
+      }
+      if (book.userId !== req.auth.userId) {
+        return res.status(403).json({ message: "Action interdite : vous n'êtes pas l'auteur de ce livre." });
+      }
+      if (req.file) {
+        const oldFilename = book.imageUrl.split("/images/")[1];
+        fs.unlink(`images/${oldFilename}`, (err) => {
+          if (err) console.error("Erreur suppression ancienne image :", err);
           Book.updateOne(
             { _id: req.params.id },
-            { ...modifBook, _id: req.params.identifiant }
+            { ...modifBook, _id: req.params.id }
           )
-            .then(() => {
-              res.status(200).json({ message: "Livre modifié avec succès!" });
-            })
-            .catch((error) => {
-              res.status(400).json({ error });
-            });
-        }
+            .then(() => res.status(200).json({ message: "Livre modifié avec succès!" }))
+            .catch((error) => res.status(400).json({ error }));
+        });
+      } else {
+        Book.updateOne(
+          { _id: req.params.id },
+          { ...modifBook, _id: req.params.id }
+        )
+          .then(() => res.status(200).json({ message: "Livre modifié avec succès!" }))
+          .catch((error) => res.status(400).json({ error }));
       }
+
+
     })
     .catch((error) => {
       res.status(400).json({ error });

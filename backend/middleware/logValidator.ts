@@ -1,7 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import validator from "email-validator";
 import { z } from "zod";
 var passwordValidator = require("password-validator");
 

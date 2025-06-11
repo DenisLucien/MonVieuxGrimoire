@@ -23,7 +23,7 @@ bookSchema.methods.calculateAverageRating = function (): Number {
         sum + rating.grade,
       0
     );
-    this.averageRating = total / this.ratings.length;
+    this.averageRating = Math.round((total / this.ratings.length)*10)/10;
   } else {
     this.averageRating = 0;
   }
